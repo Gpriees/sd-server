@@ -10,9 +10,7 @@ const axios = require('axios');
 const bcrypt = require('bcrypt-nodejs');
 
 // configure passport.js to use the local strategy
-passport.use(new LocalStrategy({
-        usernameField: 'email'
-    },
+passport.use(new LocalStrategy({ usernameField: 'email' },
     (email, password, done) => {
         axios.get(`http://localhost:5000/users?email=${email}`)
             .then(res => {
@@ -53,7 +51,7 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(bodyParser.json())
 app.use(session({
-    genid: (req) => {
+    genid: req => {
         return uuid() // use UUIDs for session IDs
     },
     store: new FileStore(),
@@ -66,24 +64,24 @@ app.use(passport.session());
 
 // create the homepage route at '/'
 app.get('/', (req, res) => {
-    res.send(`You got home page!\n`)
+    res.status(200).send(`You got home page!\n`)
 })
 
 // create the login get and post routes
 app.get('/login', (req, res) => {
-    res.send(`You got the login page!\n`)
+   res.status(200).send(`You got the login page!\n`)
 })
 
 app.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
-        if (info) {
-            return res.send(info.message)
-        }
         if (err) {
             return next(err);
         }
+        if (info) {
+            return res.send(info.message)
+        }
         if (!user) {
-            return res.redirect('/login');
+            return res.status(400).json({ error: 'You should pass an user to a login request' })
         }
         req.login(user, (err) => {
             if (err) {
@@ -96,7 +94,7 @@ app.post('/login', (req, res, next) => {
 
 app.get('/authrequired', (req, res) => {
     if (req.isAuthenticated()) {
-        res.send('you hit the authentication endpoint\n')
+        res.status(200).send('authentication succesfull')
     } else {
         res.redirect('/')
     }
