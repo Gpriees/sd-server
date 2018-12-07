@@ -2,9 +2,155 @@
 const express = require('express')
 const DB = require('./db')
 const config = require('./config')
+const cors = require('cors')
+const axios = require('axios')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
+const userMedication = [
+  {
+    username: 'gggg',
+    remedies: [ 'ritalina', 'sertralina', 'roacutan' ]
+  },
+  {
+    username: 'guilherme',
+    remedies: [ 'ritalina', 'sertralina', 'roacutan' ]
+  }
+]
+
+const pharmacyRelation = [
+  {
+    name: 'all',
+    remedies: [
+      {
+        name: 'ritalina',
+        available: true,
+        where: [
+          {
+            name: 'Posto 03',
+            address: 'Campeche'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: 'gggg',
+    remedies: [
+      {
+        name: 'ritalina',
+        available: true,
+        where: [
+          {
+            name: 'Posto 03',
+            address: 'Campeche'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      },
+      {
+        name: 'sertralina',
+        available: true,
+        where: [
+          {
+            name: 'Posto 01',
+            address: 'Centro'
+          },
+          {
+            name: 'Posto 02',
+            address: 'Lagoa'
+          },
+          {
+            name: 'Posto 03',
+            address: 'Campeche'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      },
+      {
+        name: 'roacutan',
+        available: true,
+        where: [
+          {
+            name: 'Posto 01',
+            address: 'Centro'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: 'gggg',
+    remedies: [
+      {
+        name: 'ritalina',
+        available: true,
+        where: [
+          {
+            name: 'Posto 03',
+            address: 'Campeche'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      },
+      {
+        name: 'sertralina',
+        available: true,
+        where: [
+          {
+            name: 'Posto 01',
+            address: 'Centro'
+          },
+          {
+            name: 'Posto 02',
+            address: 'Lagoa'
+          },
+          {
+            name: 'Posto 03',
+            address: 'Campeche'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      },
+      {
+        name: 'roacutan',
+        available: true,
+        where: [
+          {
+            name: 'Posto 01',
+            address: 'Centro'
+          },
+          {
+            name: 'Posto 04',
+            address: 'Palhoça'
+          }
+        ]
+      }
+    ]
+  }
+]
+
+const checkUserMedication = (username) => (userMedication.filter((user) => username === user.username).shift() || {}).remedies
 
 const db = new DB('sqlitedb')
 const app = express()
@@ -13,15 +159,7 @@ const router = express.Router()
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
-// CORS middleware
-const allowCrossDomain = function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', '*')
-  res.header('Access-Control-Allow-Headers', '*')
-  next()
-}
-
-app.use(allowCrossDomain)
+app.use(cors())
 
 router.post('/register', function (req, res) {
   db.insert([
@@ -74,13 +212,13 @@ router.get('/', (req, res) => res.status(200).json('server is up'))
 
 router.get('/health', (req, res) => res.status(200).json({ ok: true }))
 
-router.get('/alerts', (req, res) => res.status(200).json({
-    tempestade: Math.random() < 0.2 ? true : false,
-    desmoronamento: Math.random() < 0.1 ? true : false,
-    furacao: Math.random() < 0.002 ? true : false,
-    terremoto: Math.random() < 0.008 ? true : false,
-    mareAlta: Math.random() < 0.5 ? true : false
-}))
+router.get('/getMedicalStuff', (req, res) => {
+  const neededMedication = checkUserMedication(req.query.username)
+
+  axios.get(`http://localhost:3001?meds=${neededMedication}`)
+
+  res.status(200).send(pharmacyRelation[1])
+})
 
 app.use(router)
 
