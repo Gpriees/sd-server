@@ -90,7 +90,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .card {
   border-radius: 5px;
   width: 20%;
@@ -107,7 +107,7 @@ export default {
 }
 .card button {
   margin: 10px 0 0;
-  width: 60px;
+  width: auto;
   height: 30px;
   background: white;
 }

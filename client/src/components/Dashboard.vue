@@ -70,7 +70,8 @@ export default {
   data () {
     return {
       msg: 'The commoners',
-      alerts: () => ({}),
+      medicalStuff: () => ({}),
+      allRemedies: () => ({}),
       history: true,
       list: false,
       remedy: false
@@ -78,11 +79,10 @@ export default {
   },
   methods: {
     requestAlerts () {
-      this.$http
-        .get('http://localhost:3000/alerts')
+      this.$http.get('http://localhost:3000/getMedicalStuff')
         .then(({ data, status }) => {
           if (status === 200) {
-            this.alerts = data
+            console.log(data)
           }
         })
     },

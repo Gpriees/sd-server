@@ -64,7 +64,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .card {
   border-radius: 5px;
   width: 20%;
