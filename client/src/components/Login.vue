@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="card">
         <h4>Login</h4>
         <form>
             <label for="email" >E-Mail Address</label>
@@ -65,5 +65,20 @@ export default {
 </script>
 
 <style>
-
+.card {
+  border-radius: 5px;
+  width: 20%;
+  background-color: #fff;
+  display: inline-block;
+  margin: 0 auto;
+  padding: 20px 30px;
+  vertical-align: middle;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 1px 6px rgba(0,0,0,0.23);
+}
+.card button {
+  margin: 10px 0 0;
+  width: 60px;
+  height: 30px;
+  background: white;
+}
 </style>
