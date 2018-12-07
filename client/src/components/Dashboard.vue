@@ -5,12 +5,12 @@
         <h3>Tempestade: {{ alerts.tempestade ? 'fodeu' : 'de boa' }}</h3>
     <h3>Maré alta: {{ alerts.mareAlta ? 'vivo' : 'morto' }}</h3>-->
     <div class="menu">
-      <button class="button">Historico de receitas medicas</button>
-      <button class="button">Lista de medicamentos disponibilizados</button>
-      <button class="button">Solicitar medicamento</button>
+      <button @click="viewHistory()" class="button">Historico de receitas medicas</button>
+      <button @click="viewList()" class="button">Lista de medicamentos disponibilizados</button>
+      <button @click="viewRemedy()" class="button">Solicitar medicamento</button>
     </div>
     <div class="work">
-      <div class="container">
+      <div v-if="history" class="container">
         <ul>
           <li>
             <div class="card">
@@ -30,7 +30,7 @@
         </ul>
       </div>
 
-      <div class="container">
+      <div v-if="list" class="container">
         <ul>
           <li>
             <div class="card receita">
@@ -43,7 +43,7 @@
           </li>
         </ul>
       </div>
-      <div class="container">
+      <div v-if="remedy" class="container">
         <div class="card table">
           <table style="width:100%">
             <tr>
@@ -67,30 +67,48 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
-      msg: "The commoners",
-      alerts: () => ({})
-    };
-  },
-  methods: {
-    requestAlerts() {
-      this.$http
-        .get("http://localhost:3000/alerts")
-        .then(({ data, status }) => {
-          if (status === 200) {
-            this.alerts = data;
-          }
-        });
-    },
-    subscribeAlerts() {
-      setInterval(this.requestAlerts, 3500);
+      msg: 'The commoners',
+      alerts: () => ({}),
+      history: true,
+      list: false,
+      remedy: false
     }
   },
-  mounted() {
-    this.subscribeAlerts();
+  methods: {
+    requestAlerts () {
+      this.$http
+        .get('http://localhost:3000/alerts')
+        .then(({ data, status }) => {
+          if (status === 200) {
+            this.alerts = data
+          }
+        })
+    },
+    subscribeAlerts () {
+      setInterval(this.requestAlerts, 3500)
+    },
+    viewHistory () {
+      this.history = true
+      this.list = false
+      this.remedy = false
+    },
+    viewList () {
+      this.history = false
+      this.list = true
+      this.remedy = false
+    },
+    viewRemedy () {
+      this.history = false
+      this.list = false
+      this.remedy = true
+    }
+  },
+  mounted () {
+    this.subscribeAlerts()
   }
-};
+}
 </script>
 
 <style scoped>
